@@ -42,7 +42,7 @@ def main() -> None:
     for lang in prog_lang:
         pages = get_from_hh(lang)['pages']
         salary = []
-        if pages > 2:
+        if pages > 2:  # Заглушка чтобы долго не ждать!!!
             pages = 2
         for page in range(pages):
             vacancies = get_from_hh(lang, page)
