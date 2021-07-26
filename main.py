@@ -76,12 +76,12 @@ def get_from_sj(superjob_api_key, page, prog_lang):
 
 
 def predict_rub_salary(salary_from, salary_to):
-    if salary_from is not None:
-        if salary_to is not None:
+    if salary_from:
+        if salary_to:
             return (salary_from + salary_to) / 2
         else:
             return salary_from * 1.2
-    elif salary_to is not None:
+    elif salary_to:
         return salary_to * 0.8
 
 
