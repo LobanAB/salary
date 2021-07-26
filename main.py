@@ -15,9 +15,9 @@ def print_hh_salary(prog_langs):
             vacancies = get_from_hh(lang, page)
             for vacancy in vacancies['items']:
                 if vacancy['salary'] is not None:
-                    if (predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to']) is not None)\
-                            and (vacancy['salary']['currency'] == 'RUR'):
-                        salary.append(predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to']))
+                    rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
+                    if (rub_salary is not None) and (vacancy['salary']['currency'] == 'RUR'):
+                        salary.append(rub_salary)
         prog_langs_salary[lang] = {
             'vacancies_found': vacancies['found'],
             'vacancies_processed': len(salary),
@@ -26,9 +26,7 @@ def print_hh_salary(prog_langs):
     print_table(prog_langs_salary, 'HeadHunter Moscow')
 
 
-def print_sj_salary(prog_langs):
-    load_dotenv()
-    superjob_api_key = os.getenv('SUPERJOB_API_KEY')
+def print_sj_salary(prog_langs, superjob_api_key):
     prog_langs_salary = {}
     for lang in prog_langs:
         page = 0
@@ -106,6 +104,8 @@ def print_table(prog_lang_salary, title):
 
 
 def main() -> None:
+    load_dotenv()
+    superjob_api_key = os.getenv('SUPERJOB_API_KEY')
     prog_langs = [
         'JavaScript',
         'Java',
@@ -118,7 +118,7 @@ def main() -> None:
         'Scala'
     ]
     print_hh_salary(copy.deepcopy(prog_langs))
-    print_sj_salary(copy.deepcopy(prog_langs))
+    print_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
 
 
 if __name__ == '__main__':
