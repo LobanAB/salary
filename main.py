@@ -1,3 +1,4 @@
+import copy
 import os
 import requests
 
@@ -5,8 +6,9 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def print_hh_salary(prog_lang_salary):
-    for lang in prog_lang_salary:
+def print_hh_salary(prog_langs):
+    prog_langs_salary = {}
+    for lang in prog_langs:
         pages = get_from_hh(lang)['pages']
         salary = []
         for page in range(pages):
@@ -16,18 +18,19 @@ def print_hh_salary(prog_lang_salary):
                     if (predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to']) is not None)\
                             and (vacancy['salary']['currency'] == 'RUR'):
                         salary.append(predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to']))
-        prog_lang_salary[lang] = {
+        prog_langs_salary[lang] = {
             'vacancies_found': vacancies['found'],
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary))
         }
-    print_table(prog_lang_salary, 'HeadHunter Moscow')
+    print_table(prog_langs_salary, 'HeadHunter Moscow')
 
 
-def print_sj_salary(prog_lang_salary):
+def print_sj_salary(prog_langs):
     load_dotenv()
     superjob_api_key = os.getenv('SUPERJOB_API_KEY')
-    for lang in prog_lang_salary:
+    prog_langs_salary = {}
+    for lang in prog_langs:
         page = 0
         salary = []
         while True:
@@ -38,12 +41,12 @@ def print_sj_salary(prog_lang_salary):
             page += 1
             if not vacancies['more']:
                 break
-        prog_lang_salary[lang] = {
+        prog_langs_salary[lang] = {
             'vacancies_found': vacancies['total'],
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary)) if len(salary) != 0 else None
         }
-    print_table(prog_lang_salary, 'SuperJob Moscow')
+    print_table(prog_langs_salary, 'SuperJob Moscow')
 
 
 def get_from_hh(prog_lang, page=1):
@@ -103,19 +106,19 @@ def print_table(prog_lang_salary, title):
 
 
 def main() -> None:
-    prog_lang = {
-        'JavaScript': {},
-        'Java': {},
-        'Python': {},
-        'Ruby': {},
-        'PHP': {},
-        'C++': {},
-        'C#': {},
-        'Go': {},
-        'Scala': {}
-    }
-    print_hh_salary(prog_lang)
-    print_sj_salary(prog_lang)
+    prog_langs = [
+        'JavaScript',
+        'Java',
+        'Python',
+        'Ruby',
+        'PHP',
+        'C++',
+        'C#',
+        'Go',
+        'Scala'
+    ]
+    print_hh_salary(copy.deepcopy(prog_langs))
+    print_sj_salary(copy.deepcopy(prog_langs))
 
 
 if __name__ == '__main__':
