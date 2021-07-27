@@ -6,7 +6,7 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def print_hh_salary(prog_langs):
+def get_hh_salary(prog_langs):
     prog_langs_salary = {}
     for lang in prog_langs:
         salary = []
@@ -26,10 +26,10 @@ def print_hh_salary(prog_langs):
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary))
         }
-    print_table(prog_langs_salary, 'HeadHunter Moscow')
+    return prog_langs_salary
 
 
-def print_sj_salary(prog_langs, superjob_api_key):
+def get_sj_salary(prog_langs, superjob_api_key):
     prog_langs_salary = {}
     for lang in prog_langs:
         page = 0
@@ -47,7 +47,7 @@ def print_sj_salary(prog_langs, superjob_api_key):
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary)) if len(salary) != 0 else None
         }
-    print_table(prog_langs_salary, 'SuperJob Moscow')
+    return prog_langs_salary
 
 
 def get_vacancies_from_hh(prog_lang, page=1):
@@ -94,16 +94,15 @@ def predict_rub_salary_sj(vacancy):
                              vacancy['payment_to'] if vacancy['payment_to'] != 0 else None)
 
 
-def print_table(prog_lang_salary, title):
+def get_table_for_print(prog_lang_salary, title):
     table_data = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
     for lang, data in prog_lang_salary.items():
         data_string = [lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']]
         table_data.append(data_string)
-
     table = AsciiTable(table_data, title)
-    print(table.table)
+    return table
 
 
 def main() -> None:
@@ -120,9 +119,12 @@ def main() -> None:
         'Go',
         'Scala'
     ]
-    print_hh_salary(copy.deepcopy(prog_langs))
-    print_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
-
+    hh_prog_lang_salary = get_hh_salary(copy.deepcopy(prog_langs))
+    sj_prog_lang_salary = get_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
+    hh_table = get_table_for_print(hh_prog_lang_salary, 'HeadHunter Moscow')
+    sj_table = get_table_for_print(sj_prog_lang_salary, 'SuperJob Moscow')
+    print(hh_table.table)
+    print(sj_table.table)
 
 if __name__ == '__main__':
     main()
