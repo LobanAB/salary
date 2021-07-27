@@ -9,15 +9,18 @@ from dotenv import load_dotenv
 def print_hh_salary(prog_langs):
     prog_langs_salary = {}
     for lang in prog_langs:
-        pages = get_vacancies_from_hh(lang)['pages']
         salary = []
-        for page in range(pages):
+        page = 0
+        while True:
             vacancies = get_vacancies_from_hh(lang, page)
             for vacancy in vacancies['items']:
                 if vacancy['salary'] is not None:
                     rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
                     if (rub_salary is not None) and (vacancy['salary']['currency'] == 'RUR'):
                         salary.append(rub_salary)
+            page += 1
+            if page == vacancies['pages']:
+                break
         prog_langs_salary[lang] = {
             'vacancies_found': vacancies['found'],
             'vacancies_processed': len(salary),
