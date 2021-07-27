@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 def print_hh_salary(prog_langs):
     prog_langs_salary = {}
     for lang in prog_langs:
-        pages = get_from_hh(lang)['pages']
+        pages = get_vacancies_from_hh(lang)['pages']
         salary = []
         for page in range(pages):
-            vacancies = get_from_hh(lang, page)
+            vacancies = get_vacancies_from_hh(lang, page)
             for vacancy in vacancies['items']:
                 if vacancy['salary'] is not None:
                     rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
@@ -32,7 +32,7 @@ def print_sj_salary(prog_langs, superjob_api_key):
         page = 0
         salary = []
         while True:
-            vacancies = get_from_sj(superjob_api_key, page, lang)
+            vacancies = get_vacancies_from_sj(superjob_api_key, page, lang)
             for vacancy in vacancies['objects']:
                 if predict_rub_salary_sj(vacancy) is not None:
                     salary.append(predict_rub_salary_sj(vacancy))
@@ -47,7 +47,7 @@ def print_sj_salary(prog_langs, superjob_api_key):
     print_table(prog_langs_salary, 'SuperJob Moscow')
 
 
-def get_from_hh(prog_lang, page=1):
+def get_vacancies_from_hh(prog_lang, page=1):
     url = 'https://api.hh.ru/vacancies'
     payload = {
         'text': f'name:Программист {prog_lang}',
@@ -61,7 +61,7 @@ def get_from_hh(prog_lang, page=1):
     return response.json()
 
 
-def get_from_sj(superjob_api_key, page, prog_lang):
+def get_vacancies_from_sj(superjob_api_key, page, prog_lang):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     payload = {
         'catalogues': 48,
