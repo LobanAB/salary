@@ -109,7 +109,7 @@ def predict_rub_salary_sj(vacancy):
                               vacancy['payment_to'] if vacancy['payment_to'] != 0 else None)
 
 
-def get_table_for_print(prog_lang_salaries, title):
+def get_table(prog_lang_salaries, title):
     table_data = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
@@ -136,8 +136,8 @@ def main() -> None:
     ]
     hh_prog_lang_salaries = get_hh_salary(copy.deepcopy(prog_langs))
     sj_prog_lang_salaries = get_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
-    hh_table = get_table_for_print(hh_prog_lang_salaries, 'HeadHunter Moscow')
-    sj_table = get_table_for_print(sj_prog_lang_salaries, 'SuperJob Moscow')
+    hh_table = get_table(hh_prog_lang_salaries, 'HeadHunter Moscow')
+    sj_table = get_table(sj_prog_lang_salaries, 'SuperJob Moscow')
     print(hh_table.table)
     print(sj_table.table)
 
