@@ -40,7 +40,7 @@ def get_sj_salary(prog_langs, superjob_api_key):
         prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': len(salary),
-            'average_salary': int(sum(salary) / len(salary)) if len(salary) != 0 else None
+            'average_salary': int(sum(salary) / len(salary)) if len(salary) else None
         }
     return prog_lang_salaries
 
