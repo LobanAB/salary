@@ -50,7 +50,7 @@ def get_sj_lang_salary(lang, superjob_api_key):
     while True:
         vacancies = get_vacancies_from_sj(superjob_api_key, page, lang)
         for vacancy in vacancies['objects']:
-            vacancy_salary = predict_rub_salary_sj(vacancy)
+            vacancy_salary = predict_rub_salary(vacancy['payment_from'], vacancy['payment_to'])
             if vacancy_salary:
                 salary.append(vacancy_salary)
         page += 1
@@ -103,19 +103,14 @@ def predict_rub_salary(salary_from, salary_to):
         return salary_to * 0.8
 
 
-def predict_rub_salary_sj(vacancy):
-    return predict_rub_salary(vacancy['payment_from'] if vacancy['payment_from'] != 0 else None,
-                              vacancy['payment_to'] if vacancy['payment_to'] != 0 else None)
-
-
 def get_table(prog_lang_salaries, title):
-    table_data = [
+    table = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
-    for lang, data in prog_lang_salaries.items():
-        data_string = [lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']]
-        table_data.append(data_string)
-    table = AsciiTable(table_data, title)
+    for lang, salaries in prog_lang_salaries.items():
+        prog_lang = [lang, salaries['vacancies_found'], salaries['vacancies_processed'], salaries['average_salary']]
+        table.append(prog_lang)
+    table = AsciiTable(table, title)
     return table
 
 
