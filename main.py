@@ -61,12 +61,15 @@ def get_sj_lang_salary(lang, superjob_api_key):
 
 def get_vacancies_from_hh(prog_lang, page=1):
     url = 'https://api.hh.ru/vacancies'
+    vacancies_published_days = 30
+    vacancies_city = 1
+    vacancies_per_page = 20
     payload = {
         'text': f'name:Программист {prog_lang}',
-        'period': 30,
-        'area': 1,
+        'period': vacancies_published_days,
+        'area': vacancies_city,
         'page': page,
-        'per_page': 20
+        'per_page': vacancies_per_page
     }
     response = requests.get(url, params=payload)
     response.raise_for_status()
@@ -75,11 +78,14 @@ def get_vacancies_from_hh(prog_lang, page=1):
 
 def get_vacancies_from_sj(superjob_api_key, page, prog_lang):
     url = 'https://api.superjob.ru/2.0/vacancies/'
+    industries_section = 48
+    vacancies_city = 4
+    vacancies_per_page = 100
     payload = {
-        'catalogues': 48,
-        'town': 4,
+        'catalogues': industries_section,
+        'town': vacancies_city,
         'page': page,
-        'count': 100,
+        'count': vacancies_per_page,
         'keyword': prog_lang
     }
     headers = {'X-Api-App-Id': superjob_api_key}
