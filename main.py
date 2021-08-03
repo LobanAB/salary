@@ -13,7 +13,7 @@ def get_hh_salary(prog_langs):
         prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': len(salary),
-            'average_salary': int(sum(salary) / len(salary))
+            'average_salary': int(sum(salary) / len(salary)) if len(salary) else None
         }
     return prog_lang_salaries
 
