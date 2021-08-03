@@ -51,8 +51,9 @@ def get_sj_lang_salary(lang, superjob_api_key):
     while True:
         vacancies = get_vacancies_from_sj(superjob_api_key, page, lang)
         for vacancy in vacancies['objects']:
-            if predict_rub_salary_sj(vacancy):
-                salary.append(predict_rub_salary_sj(vacancy))
+            vacancy_salary = predict_rub_salary_sj(vacancy)
+            if vacancy_salary:
+                salary.append(vacancy_salary)
         page += 1
         if not vacancies['more']:
             return salary, vacancies['total']
