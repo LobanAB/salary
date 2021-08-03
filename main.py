@@ -7,15 +7,15 @@ from terminaltables import AsciiTable
 
 
 def get_hh_salary(prog_langs):
-    prog_langs_salary = {}
+    prog_lang_salaries = {}
     for lang in prog_langs:
         salary, vacancies_found = get_hh_lang_salary(lang)
-        prog_langs_salary[lang] = {
+        prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary))
         }
-    return prog_langs_salary
+    return prog_lang_salaries
 
 
 def get_hh_lang_salary(lang):
@@ -24,9 +24,9 @@ def get_hh_lang_salary(lang):
     while True:
         vacancies = get_vacancies_from_hh(lang, page)
         for vacancy in vacancies['items']:
-            if vacancy['salary']:
+            if vacancy['salary'] and (vacancy['salary']['currency'] == 'RUR'):
                 rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
-                if rub_salary and (vacancy['salary']['currency'] == 'RUR'):
+                if rub_salary:
                     salary.append(rub_salary)
         page += 1
         if page == vacancies['pages']:
@@ -34,15 +34,15 @@ def get_hh_lang_salary(lang):
 
 
 def get_sj_salary(prog_langs, superjob_api_key):
-    prog_langs_salary = {}
+    prog_lang_salaries = {}
     for lang in prog_langs:
         salary, vacancies_found = get_sj_lang_salary(lang, superjob_api_key)
-        prog_langs_salary[lang] = {
+        prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': len(salary),
             'average_salary': int(sum(salary) / len(salary)) if len(salary) != 0 else None
         }
-    return prog_langs_salary
+    return prog_lang_salaries
 
 
 def get_sj_lang_salary(lang, superjob_api_key):
@@ -102,11 +102,11 @@ def predict_rub_salary_sj(vacancy):
                               vacancy['payment_to'] if vacancy['payment_to'] != 0 else None)
 
 
-def get_table_for_print(prog_lang_salary, title):
+def get_table_for_print(prog_lang_salaries, title):
     table_data = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
-    for lang, data in prog_lang_salary.items():
+    for lang, data in prog_lang_salaries.items():
         data_string = [lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']]
         table_data.append(data_string)
     table = AsciiTable(table_data, title)
@@ -127,10 +127,10 @@ def main() -> None:
         'Go',
         'Scala'
     ]
-    hh_prog_lang_salary = get_hh_salary(copy.deepcopy(prog_langs))
-    sj_prog_lang_salary = get_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
-    hh_table = get_table_for_print(hh_prog_lang_salary, 'HeadHunter Moscow')
-    sj_table = get_table_for_print(sj_prog_lang_salary, 'SuperJob Moscow')
+    hh_prog_lang_salaries = get_hh_salary(copy.deepcopy(prog_langs))
+    sj_prog_lang_salaries = get_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
+    hh_table = get_table_for_print(hh_prog_lang_salaries, 'HeadHunter Moscow')
+    sj_table = get_table_for_print(sj_prog_lang_salaries, 'SuperJob Moscow')
     print(hh_table.table)
     print(sj_table.table)
 
