@@ -1,4 +1,3 @@
-import copy
 import os
 
 import requests
@@ -134,8 +133,8 @@ def main() -> None:
         'Go',
         'Scala'
     ]
-    hh_prog_lang_salaries = get_hh_salary(copy.deepcopy(prog_langs))
-    sj_prog_lang_salaries = get_sj_salary(copy.deepcopy(prog_langs), superjob_api_key)
+    hh_prog_lang_salaries = get_hh_salary(prog_langs)
+    sj_prog_lang_salaries = get_sj_salary(prog_langs, superjob_api_key)
     hh_table = get_table(hh_prog_lang_salaries, 'HeadHunter Moscow')
     sj_table = get_table(sj_prog_lang_salaries, 'SuperJob Moscow')
     print(hh_table.table)
