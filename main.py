@@ -106,10 +106,17 @@ def predict_rub_salary(salary_from, salary_to):
 
 def get_table(prog_lang_salaries, title):
     table = [
-        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
+        ['Язык программирования',
+         'Вакансий найдено',
+         'Вакансий обработано',
+         'Средняя зарплата'],
     ]
     for lang, salaries in prog_lang_salaries.items():
-        prog_lang = [lang, salaries['vacancies_found'], salaries['vacancies_processed'], salaries['average_salary']]
+        prog_lang = [lang,
+                     salaries['vacancies_found'],
+                     salaries['vacancies_processed'],
+                     salaries['average_salary']
+                     ]
         table.append(prog_lang)
     table = AsciiTable(table, title)
     return table
