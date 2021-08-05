@@ -23,7 +23,7 @@ def get_hh_lang_salary(lang):
     while True:
         vacancies = get_vacancies_from_hh(lang, page)
         for vacancy in vacancies['items']:
-            if not vacancy['salary'] or not (vacancy['salary']['currency'] == 'RUR'):
+            if not vacancy['salary'] or vacancy['salary']['currency'] != 'RUR':
                 continue
             rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
             if rub_salary:
