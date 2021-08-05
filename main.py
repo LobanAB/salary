@@ -5,20 +5,20 @@ from dotenv import load_dotenv
 from terminaltables import AsciiTable
 
 
-def get_hh_salary(prog_langs):
+def get_hh_salaries(prog_langs):
     prog_lang_salaries = {}
     for lang in prog_langs:
-        salary, vacancies_found = get_hh_lang_salary(lang)
+        salaries, vacancies_found = get_hh_lang_salaries(lang)
         prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
-            'vacancies_processed': len(salary),
-            'average_salary': int(sum(salary) / len(salary)) if len(salary) else None
+            'vacancies_processed': len(salaries),
+            'average_salary': int(sum(salaries) / len(salaries)) if len(salaries) else None
         }
     return prog_lang_salaries
 
 
-def get_hh_lang_salary(lang):
-    salary = []
+def get_hh_lang_salaries(lang):
+    salaries = []
     page = 0
     while True:
         vacancies = get_vacancies_from_hh(lang, page)
@@ -27,36 +27,36 @@ def get_hh_lang_salary(lang):
                 continue
             rub_salary = predict_rub_salary(vacancy['salary']['from'], vacancy['salary']['to'])
             if rub_salary:
-                salary.append(rub_salary)
+                salaries.append(rub_salary)
         page += 1
         if page == vacancies['pages']:
-            return salary, vacancies['found']
+            return salaries, vacancies['found']
 
 
-def get_sj_salary(prog_langs, superjob_api_key):
+def get_sj_salaries(prog_langs, superjob_api_key):
     prog_lang_salaries = {}
     for lang in prog_langs:
-        salary, vacancies_found = get_sj_lang_salary(lang, superjob_api_key)
+        salaries, vacancies_found = get_sj_lang_salaries(lang, superjob_api_key)
         prog_lang_salaries[lang] = {
             'vacancies_found': vacancies_found,
-            'vacancies_processed': len(salary),
-            'average_salary': int(sum(salary) / len(salary)) if len(salary) else None
+            'vacancies_processed': len(salaries),
+            'average_salary': int(sum(salaries) / len(salaries)) if len(salaries) else None
         }
     return prog_lang_salaries
 
 
-def get_sj_lang_salary(lang, superjob_api_key):
-    salary = []
+def get_sj_lang_salaries(lang, superjob_api_key):
+    salaries = []
     page = 0
     while True:
         vacancies = get_vacancies_from_sj(superjob_api_key, page, lang)
         for vacancy in vacancies['objects']:
             vacancy_salary = predict_rub_salary(vacancy['payment_from'], vacancy['payment_to'])
             if vacancy_salary:
-                salary.append(vacancy_salary)
+                salaries.append(vacancy_salary)
         page += 1
         if not vacancies['more']:
-            return salary, vacancies['total']
+            return salaries, vacancies['total']
 
 
 def get_vacancies_from_hh(prog_lang, page=1):
@@ -136,8 +136,8 @@ def main() -> None:
         'Go',
         'Scala'
     ]
-    hh_prog_lang_salaries = get_hh_salary(prog_langs)
-    sj_prog_lang_salaries = get_sj_salary(prog_langs, superjob_api_key)
+    hh_prog_lang_salaries = get_hh_salaries(prog_langs)
+    sj_prog_lang_salaries = get_sj_salaries(prog_langs, superjob_api_key)
     hh_table = get_table(hh_prog_lang_salaries, 'HeadHunter Moscow')
     sj_table = get_table(sj_prog_lang_salaries, 'SuperJob Moscow')
     print(hh_table.table)
